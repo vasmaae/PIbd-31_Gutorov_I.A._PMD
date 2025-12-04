@@ -12,6 +12,8 @@ class SearchBooksResponseDto {
   @JsonKey(name: 'books')
   final List<List<BookDto>> bookItems;
 
+  int get currentPage => (offset / number + 1).toInt();
+
   SearchBooksResponseDto({
     required this.available,
     required this.number,
