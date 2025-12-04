@@ -45,7 +45,7 @@ class _BodyState extends State<_Body> {
   }
 
   void _onNextPageListener() {
-    if (scrollController.offset > scrollController.position.maxScrollExtent) {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent) {
       final bloc = context.read<HomeBloc>();
       if (!bloc.state.isPaginationLoading) {
         bloc.add(
@@ -64,7 +64,6 @@ class _BodyState extends State<_Body> {
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: Column(
         children: [
-          // === Поиск ===
           Padding(
             padding: const EdgeInsets.all(12),
             child: CupertinoSearchTextField(
@@ -79,10 +78,8 @@ class _BodyState extends State<_Body> {
             ),
           ),
 
-          // === Основное содержимое через BlocBuilder ===
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              // Ошибка загрузки (основной запрос)
               if (state.error != null) {
                 return Expanded(
                   child: Center(
@@ -91,9 +88,7 @@ class _BodyState extends State<_Body> {
                       children: [
                         const Icon(Icons.error, color: Colors.red, size: 64),
                         const SizedBox(height: 16),
-                        Text(
-                          'Ошибка загрузки'
-                        ),
+                        Text('Ошибка загрузки'),
                         const SizedBox(height: 8),
                         Text(
                           state.error ?? '',
@@ -114,37 +109,27 @@ class _BodyState extends State<_Body> {
                 );
               }
 
-              // Основной лоадер
               if (state.isLoading) {
                 return const Expanded(
                   child: Center(child: CircularProgressIndicator()),
                 );
               }
 
-              // Пустой результат
               final items = state.data?.data ?? [];
               if (items.isEmpty) {
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      'Книги не найдены'
-                    ),
-                  ),
-                );
+                return Expanded(child: Center(child: Text('Книги не найдены')));
               }
 
-              // Основной список
               return Expanded(
                 child: RefreshIndicator(
                   onRefresh: _onRefresh,
                   child: ListView.builder(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(16), // как во втором примере
+                    padding: const EdgeInsets.all(16),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final data = items[index];
 
-                      // Отступ снизу у каждой карточки, кроме последней (опционально)
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: _Card.fromData(
