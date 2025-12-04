@@ -20,14 +20,14 @@ class _Card extends StatefulWidget {
   });
 
   factory _Card.fromData(
-    BookData data, {
+    CardData data, {
     required OnLikeCallback onLike,
     VoidCallback? onTap,
   }) => _Card(
     data.title,
-    descriptionText: data.author,
+    descriptionText: data.authors,
     imageUrl: data.imageUrl,
-    tip: data.tip,
+    tip: data.rating,
     onLike: onLike,
     onTap: onTap,
   );
@@ -94,6 +94,31 @@ class _CardState extends State<_Card> {
                         ),
                       ),
                     ),
+                  Positioned(
+                    bottom: 6,
+                    right: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => isLiked = !isLiked);
+                          widget.onLike!(widget.text, isLiked);
+                        },
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.redAccent : Colors.grey,
+                            key: ValueKey(isLiked),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -119,27 +144,6 @@ class _CardState extends State<_Card> {
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
                   ),
                 ],
-              ),
-            ),
-
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 8),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() => isLiked = !isLiked);
-                    widget.onLike!(widget.text, isLiked);
-                  },
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.redAccent : Colors.grey,
-                      key: ValueKey(isLiked),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

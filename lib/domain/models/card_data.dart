@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class BookData {
+class CardData {
   final String title;
-  final String author;
+  final String authors;
   final IconData icon;
   final String? imageUrl;
-  final String? tip;
+  final String? rating;
 
-  BookData({
+  CardData({
     required this.title,
-    required this.author,
+    required this.authors,
     this.icon = Icons.ac_unit_outlined,
     this.imageUrl,
-    this.tip
+    this.rating,
   });
 }

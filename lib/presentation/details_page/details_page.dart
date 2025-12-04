@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/domain/models/card_data.dart';
 
 class DetailsPage extends StatelessWidget {
-  final BookData data;
+  final CardData data;
 
   const DetailsPage(this.data, {super.key});
 
@@ -25,7 +25,7 @@ class DetailsPage extends StatelessWidget {
             ),
           ),
           Text(
-            data.author,
+            data.authors,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ],
