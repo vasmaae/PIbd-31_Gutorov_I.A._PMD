@@ -78,35 +78,39 @@ class _BodyState extends State<_Body> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
-            child: CupertinoSearchTextField(
-              controller: searchController,
-              placeholder: context.locale.search,
-              onChanged: (search) {
-                Debounce.run(
-                  () => context.read<HomeBloc>().add(
-                    HomeLoadDataEvent(search: search),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CupertinoSearchTextField(
+                    controller: searchController,
+                    placeholder: context.locale.search,
+                    onChanged: (search) {
+                      Debounce.run(
+                        () => context.read<HomeBloc>().add(
+                          HomeLoadDataEvent(search: search),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
-
-          GestureDetector(
-            onTap: () =>
-                context.read<LocaleBloc>().add(const ChangeLocaleEvent()),
-            child: SizedBox.square(
-              dimension: 50,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: BlocBuilder<LocaleBloc, LocaleState>(
-                  builder: (context, state) {
-                    return state.currentLocale.languageCode == 'ru'
-                        ? const SvgRu()
-                        : const SvgEn();
-                  },
                 ),
-              ),
+
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () =>
+                      context.read<LocaleBloc>().add(const ChangeLocaleEvent()),
+                  child: SizedBox.square(
+                    dimension: 50,
+                    child: BlocBuilder<LocaleBloc, LocaleState>(
+                      builder: (context, state) {
+                        return state.currentLocale.languageCode == 'ru'
+                            ? const SvgRu()
+                            : const SvgEn();
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
