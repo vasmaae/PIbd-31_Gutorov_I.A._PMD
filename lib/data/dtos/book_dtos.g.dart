@@ -6,20 +6,19 @@ part of 'book_dtos.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SearchBooksResponseDto _$SearchBooksResponseDtoFromJson(
-  Map<String, dynamic> json,
-) => SearchBooksResponseDto(
-  available: (json['available'] as num).toInt(),
-  number: (json['number'] as num).toInt(),
-  offset: (json['offset'] as num).toInt(),
-  bookItems: (json['books'] as List<dynamic>)
-      .map(
-        (e) => (e as List<dynamic>)
-            .map((e) => BookDto.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      )
-      .toList(),
-);
+SearchBooksResponseDto _$SearchBooksResponseDtoFromJson(Map<String, dynamic> json) =>
+    SearchBooksResponseDto(
+      available: (json['available'] as num).toInt(),
+      number: (json['number'] as num).toInt(),
+      offset: (json['offset'] as num).toInt(),
+      bookItems: (json['books'] as List<dynamic>)
+          .map(
+            (e) => (e as List<dynamic>)
+                .map((e) => BookDto.fromJson(e as Map<String, dynamic>))
+                .toList(),
+          )
+          .toList(),
+    );
 
 BookDto _$BookDtoFromJson(Map<String, dynamic> json) => BookDto(
   id: (json['id'] as num).toInt(),

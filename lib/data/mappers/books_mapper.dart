@@ -7,5 +7,6 @@ extension BooksMapper on BookDto {
     authors: authors.map((e) => e.name).toList().join(', '),
     imageUrl: image,
     rating: rating?.average.toString(),
+    id: id,
   );
 }

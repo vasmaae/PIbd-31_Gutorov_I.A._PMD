@@ -37,17 +37,11 @@ class DetailsPage extends StatelessWidget {
                         },
                         errorBuilder: (context, error, stackTrace) {
                           return const Center(
-                            child: Icon(
-                              Icons.broken_image,
-                              size: 60,
-                              color: Colors.grey,
-                            ),
+                            child: Icon(Icons.broken_image, size: 60, color: Colors.grey),
                           );
                         },
                       )
-                    : const Center(
-                        child: Icon(Icons.image, size: 60, color: Colors.grey),
-                      ),
+                    : const Center(child: Icon(Icons.image, size: 60, color: Colors.grey)),
               ),
             ),
 
@@ -58,43 +52,34 @@ class DetailsPage extends StatelessWidget {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(bottom: 12.0),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       data.title,
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 24,
-                          ),
+                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                      ),
                     ),
                   ),
 
                   Row(
                     children: [
-                      Icon(
-                        Icons.person_outline,
-                        color: Theme.of(context).primaryColor,
-                        size: 20,
-                      ),
+                      Icon(Icons.person_outline, color: Theme.of(context).primaryColor, size: 20),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
                           data.authors,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[700],
-                                fontStyle: FontStyle.italic,
-                              ),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[700],
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
                     ],

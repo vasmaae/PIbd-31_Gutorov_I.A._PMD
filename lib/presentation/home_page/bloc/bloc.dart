@@ -10,10 +10,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeLoadDataEvent>(_onLoadData);
   }
 
-  Future<void> _onLoadData(
-    HomeLoadDataEvent event,
-    Emitter<HomeState> emit,
-  ) async {
+  Future<void> _onLoadData(HomeLoadDataEvent event, Emitter<HomeState> emit) async {
     if (event.nextPage == null) {
       emit(state.copyWith(isLoading: true));
     } else {
@@ -32,13 +29,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       data?.data?.insertAll(0, state.data?.data ?? []);
     }
 
-    emit(
-      state.copyWith(
-        isLoading: false,
-        isPaginationLoading: false,
-        data: data,
-        error: error,
-      ),
-    );
+    emit(state.copyWith(isLoading: false, isPaginationLoading: false, data: data, error: error));
   }
 }

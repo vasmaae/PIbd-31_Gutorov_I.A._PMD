@@ -1,28 +1,33 @@
 part of 'home_page.dart';
 
-typedef OnLikeCallback = void Function(String title, bool isLiked)?;
+typedef OnLikeCallback = void Function(int? id, String title, bool isLiked)?;
 
-class _Card extends StatefulWidget {
+class _Card extends StatelessWidget {
   final String text;
   final String descriptionText;
   final String? imageUrl;
   final String? tip;
   final OnLikeCallback onLike;
   final VoidCallback? onTap;
+  final int? id;
+  final bool isLiked;
 
   const _Card(
     this.text, {
     required this.descriptionText,
     this.imageUrl,
     this.tip,
-    required this.onLike,
+    this.onLike,
     this.onTap,
+    this.id,
+    this.isLiked = false,
   });
 
   factory _Card.fromData(
     CardData data, {
-    required OnLikeCallback onLike,
+    OnLikeCallback onLike,
     VoidCallback? onTap,
+    bool isLiked = false,
   }) => _Card(
     data.title,
     descriptionText: data.authors,
@@ -30,19 +35,14 @@ class _Card extends StatefulWidget {
     tip: data.rating,
     onLike: onLike,
     onTap: onTap,
+    isLiked: isLiked,
+    id: data.id,
   );
-
-  @override
-  State<_Card> createState() => _CardState();
-}
-
-class _CardState extends State<_Card> {
-  bool isLiked = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Card(
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -58,7 +58,7 @@ class _CardState extends State<_Card> {
                   AspectRatio(
                     aspectRatio: 1.4,
                     child: Image.network(
-                      widget.imageUrl ?? '',
+                      imageUrl ?? '',
                       fit: BoxFit.cover,
                       width: double.infinity,
                       errorBuilder: (_, __, ___) => Container(
@@ -71,7 +71,7 @@ class _CardState extends State<_Card> {
                       ),
                     ),
                   ),
-                  if (widget.tip != null)
+                  if (tip != null)
                     Positioned(
                       bottom: 12,
                       left: 12,
@@ -85,7 +85,7 @@ class _CardState extends State<_Card> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          widget.tip!,
+                          tip!,
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -104,10 +104,7 @@ class _CardState extends State<_Card> {
                         bottom: 8,
                       ),
                       child: GestureDetector(
-                        onTap: () {
-                          setState(() => isLiked = !isLiked);
-                          widget.onLike!(widget.text, isLiked);
-                        },
+                        onTap: () => onLike?.call(id, text, isLiked),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 200),
                           child: Icon(
@@ -129,7 +126,7 @@ class _CardState extends State<_Card> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.text,
+                    text,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -138,7 +135,7 @@ class _CardState extends State<_Card> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    widget.descriptionText,
+                    descriptionText,
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),

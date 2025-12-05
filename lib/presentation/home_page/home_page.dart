@@ -1,12 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/components/extensions/local_context_x.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/components/utils/debounce.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/domain/models/card_data.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/common/svg_en.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/common/svg_objects.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/common/svg_ru.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/details_page/details_page.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/home_page/bloc/bloc.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/home_page/bloc/events.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/home_page/bloc/state.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/like_bloc/like_bloc.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/like_bloc/like_event.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/like_bloc/like_state.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/locale_bloc/locale_bloc.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/locale_bloc/locale_events.dart';
+import 'package:pibd_31_gutorov_i_a_pmd/presentation/locale_bloc/locale_state.dart';
 
 part 'card.dart';
 
@@ -37,8 +47,11 @@ class _BodyState extends State<_Body> {
 
   @override
   void initState() {
+    SvgObjects.init();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeBloc>().add(const HomeLoadDataEvent());
+      context.read<LikeBloc>().add(const LoadLikesEvent());
     });
     scrollController.addListener(_onNextPageListener);
     super.initState();
@@ -68,6 +81,7 @@ class _BodyState extends State<_Body> {
             padding: const EdgeInsets.all(12),
             child: CupertinoSearchTextField(
               controller: searchController,
+              placeholder: context.locale.search,
               onChanged: (search) {
                 Debounce.run(
                   () => context.read<HomeBloc>().add(
@@ -75,6 +89,24 @@ class _BodyState extends State<_Body> {
                   ),
                 );
               },
+            ),
+          ),
+
+          GestureDetector(
+            onTap: () =>
+                context.read<LocaleBloc>().add(const ChangeLocaleEvent()),
+            child: SizedBox.square(
+              dimension: 50,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: BlocBuilder<LocaleBloc, LocaleState>(
+                  builder: (context, state) {
+                    return state.currentLocale.languageCode == 'ru'
+                        ? const SvgRu()
+                        : const SvgEn();
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -88,7 +120,7 @@ class _BodyState extends State<_Body> {
                       children: [
                         const Icon(Icons.error, color: Colors.red, size: 64),
                         const SizedBox(height: 16),
-                        Text('Ошибка загрузки'),
+                        Text(context.locale.load_error),
                         const SizedBox(height: 8),
                         Text(
                           state.error ?? '',
@@ -101,7 +133,7 @@ class _BodyState extends State<_Body> {
                           onPressed: () => context.read<HomeBloc>().add(
                             const HomeLoadDataEvent(search: ''),
                           ),
-                          child: const Text('Повторить'),
+                          child: Text(context.locale.retry),
                         ),
                       ],
                     ),
@@ -117,30 +149,37 @@ class _BodyState extends State<_Body> {
 
               final items = state.data?.data ?? [];
               if (items.isEmpty) {
-                return Expanded(child: Center(child: Text('Книги не найдены')));
+                return Expanded(
+                  child: Center(child: Text(context.locale.books_not_found)),
+                );
               }
 
               return Expanded(
-                child: RefreshIndicator(
-                  onRefresh: _onRefresh,
-                  child: ListView.builder(
-                    controller: scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final data = items[index];
+                child: BlocBuilder<LikeBloc, LikeState>(
+                  builder: (context, likeState) {
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          final data = items[index];
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: _Card.fromData(
-                          data,
-                          onLike: (title, isLiked) =>
-                              _showSnackBar(context, title, isLiked),
-                          onTap: () => _navToDetails(context, data),
-                        ),
-                      );
-                    },
-                  ),
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: _Card.fromData(
+                              data,
+                              onLike: _onLike,
+                              isLiked:
+                                  likeState.likedIds?.contains(data.id) == true,
+                              onTap: () => _navToDetails(context, data),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
               );
             },
@@ -176,12 +215,19 @@ class _BodyState extends State<_Body> {
     );
   }
 
+  void _onLike(int? id, String title, bool isLiked) {
+    if (id != null) {
+      context.read<LikeBloc>().add(ChangeLikeEvent(id));
+      _showSnackBar(context, title, !isLiked);
+    }
+  }
+
   void _showSnackBar(BuildContext context, String title, bool isLiked) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '$title ${isLiked ? 'добавлена в избранное' : 'удалена из избранного'}',
+            '$title ${isLiked ? context.locale.liked : context.locale.disliked}',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           backgroundColor: Colors.orangeAccent,

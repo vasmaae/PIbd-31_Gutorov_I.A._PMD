@@ -38,16 +38,9 @@ class BookDto {
   @JsonKey(name: 'rating')
   final RatingDto? rating;
 
-  BookDto({
-    required this.id,
-    required this.title,
-    this.image,
-    required this.authors,
-    this.rating,
-  });
+  BookDto({required this.id, required this.title, this.image, required this.authors, this.rating});
 
-  factory BookDto.fromJson(Map<String, dynamic> json) =>
-      _$BookDtoFromJson(json);
+  factory BookDto.fromJson(Map<String, dynamic> json) => _$BookDtoFromJson(json);
 }
 
 /// Автор книги
@@ -58,8 +51,7 @@ class AuthorDto {
 
   AuthorDto({required this.id, required this.name});
 
-  factory AuthorDto.fromJson(Map<String, dynamic> json) =>
-      _$AuthorDtoFromJson(json);
+  factory AuthorDto.fromJson(Map<String, dynamic> json) => _$AuthorDtoFromJson(json);
 }
 
 /// Рейтинг книги
@@ -69,6 +61,5 @@ class RatingDto {
 
   RatingDto({required this.average});
 
-  factory RatingDto.fromJson(Map<String, dynamic> json) =>
-      _$RatingDtoFromJson(json);
+  factory RatingDto.fromJson(Map<String, dynamic> json) => _$RatingDtoFromJson(json);
 }

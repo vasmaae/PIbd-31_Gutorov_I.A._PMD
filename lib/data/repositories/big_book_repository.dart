@@ -32,14 +32,9 @@ class BigBookRepository extends Repository {
         },
       );
 
-      var dto = SearchBooksResponseDto.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      var dto = SearchBooksResponseDto.fromJson(response.data as Map<String, dynamic>);
 
-      final List<CardData> data = dto.bookItems
-          .map((e) => e[0])
-          .map((e) => e.toDomain())
-          .toList();
+      final List<CardData> data = dto.bookItems.map((e) => e[0]).map((e) => e.toDomain()).toList();
 
       return HomeData(data: data, nextPage: dto.currentPage + 1);
     } on DioException catch (e) {

@@ -6,6 +6,7 @@ class CardData {
   final IconData icon;
   final String? imageUrl;
   final String? rating;
+  final int? id;
 
   CardData({
     required this.title,
@@ -13,5 +14,6 @@ class CardData {
     this.icon = Icons.ac_unit_outlined,
     this.imageUrl,
     this.rating,
+    this.id,
   });
 }

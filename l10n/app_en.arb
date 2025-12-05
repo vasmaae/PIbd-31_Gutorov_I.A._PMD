@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+
+  "search": "Search",
+  "liked": "liked!",
+  "disliked": "disliked :(",
+  "load_error": "Load error",
+  "retry": "Retry",
+  "books_not_found": "Books not found"
+}
