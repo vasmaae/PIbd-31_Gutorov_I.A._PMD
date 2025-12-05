@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/components/locale/l10n/app_locale.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/data/repositories/big_book_repository.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/home_page/bloc/bloc.dart';
@@ -9,7 +10,8 @@ import 'package:pibd_31_gutorov_i_a_pmd/presentation/like_bloc/like_bloc.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/locale_bloc/locale_bloc.dart';
 import 'package:pibd_31_gutorov_i_a_pmd/presentation/locale_bloc/locale_state.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
   runApp(const MyApp());
 }
 
